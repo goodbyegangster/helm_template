@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name | quote }}
+  labels:
+    {{- include "sample.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.deployment.replicas.enabled }}
+  replicas: {{ .Values.deployment.replicas.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "sample.selectorLabels" . | nindent 6 }}
+  strategy:
+  {{- with .Values.deployment.strategy }}
+    type: {{ .type | quote }}
+    {{- if eq .type "RollingUpdate" }}
+    rollingUpdate:
+      maxSurge: {{ .rollingUpdate.maxSurge | quote }}
+      maxUnavailable: {{ .rollingUpdate.maxUnavailable | quote }}
+    {{- end }}
+  {{- end }}
+  template:
+    metadata:
+      labels:
+        {{- include "sample.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ template "sample.serviceAccountName" . }}
+      containers:
+      {{- with .Values.deployment.container }}
+        - name: {{ $.Release.Name | quote }}
+          image: "{{ .image.name }}:{{ .image.tag }}"
+          imagePullPolicy: {{ .image.pullPolicy }}
+          ports:
+            - name: {{ .port.name | quote }}
+              containerPort: {{ .port.containerPort }}
+              protocol: {{ .port.protocol | quote }}
+          livenessProbe:
+            httpGet:
+              port: http
+              path: {{ .livenessProbe.path | quote }}
+          readinessProbe:
+            httpGet:
+              port: http
+              path: {{ .readinessProbe.path | quote }}
+          resources:
+            requests:
+              memory: {{ .resources.memory | quote }}
+              cpu: {{ .resources.cpu | quote }}
+            limits:
+              memory: {{ .resources.memory | quote }}
+              cpu: {{ .resources.cpu | quote }}
+      {{- end }}

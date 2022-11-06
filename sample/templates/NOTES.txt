@@ -1,0 +1,15 @@
+####  SAMPLE HELM CHART  ####
+
+Chart Name: {{ .Chart.Name }}
+Chart Version: {{ .Chart.Version }}
+Chart Resource Name: {{ .Release.Name }}
+
+The following resources have been managed.
+- Deployment
+  - {{ .Values.deployment.container.image.name }}:{{ .Values.deployment.container.image.tag }}
+- Service
+  - {{ .Values.service.type }}
+{{- if .Values.serviceAccount.create }}
+- ServiceAccount
+  - {{ template "sample.serviceAccountName" . }}
+{{- end }}

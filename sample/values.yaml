@@ -1,0 +1,35 @@
+# for deployment.yaml
+deployment:
+  replicas:
+    enabled: false
+    replicaCount: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+  container:
+    image:
+      name: gcr.io/google-samples/hello-app
+      tag: "2.0"
+      pullPolicy: IfNotPresent
+    port:
+      name: http
+      containerPort: 8080
+      protocol: TCP
+    livenessProbe:
+      path: /
+    readinessProbe:
+      path: /
+    resources:
+      memory: 128Mi
+      cpu: 100m
+# for svc.yaml
+service:
+  type: ClusterIP
+  port: 80
+# for serviceaccount.yaml
+serviceAccount:
+  create: false
+  name: ""
+  annotations: {}

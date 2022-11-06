@@ -1,0 +1,8 @@
+apiVersion: v2 # Helm 3 の場合は v2 を指定
+name: sample
+type: application # 'application' or 'library'
+version: 1.0.0 # The chart version. Versions are expected to follow Semantic Versioning.
+appVersion: 2.0.0 # This is the version number of the application being deployed. 補助的なパラメーター。今回利用するコンテナイメージが「gcr.io/google-samples/hello-app:2.0」のため、2.0.0と設定
+kubeVersion: ">= 1.25.0"
+description: Sample Helm Chart
+icon: http://dummy.com/ # 設定しないと linter が注意してくるので、今回は dummy の URL を指定
